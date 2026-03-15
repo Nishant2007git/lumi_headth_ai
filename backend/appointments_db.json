@@ -1,0 +1,52 @@
+[
+  {
+    "_id": "app_dd9a6419",
+    "doctor_id": "doc_1",
+    "user_id": "test_json_user_123",
+    "date": "2026-03-15T17:04:18.322659",
+    "status": "Confirmed",
+    "created_at": "2026-03-15T17:04:18.322807"
+  },
+  {
+    "_id": "app_9c4c72cd",
+    "doctor_id": "user_dd14d26c",
+    "user_id": "user_123",
+    "date": "2026-03-15T18:52:11.675266",
+    "status": "Confirmed",
+    "symptoms": [
+      "chest pain"
+    ],
+    "ai_prediction": "Potential General Cardiology Concern (Cardiology)",
+    "created_at": "2026-03-15T18:22:11.675352"
+  },
+  {
+    "_id": "app_28186483",
+    "doctor_id": "user_963c8b7a",
+    "user_id": "user_c9353814",
+    "date": "2026-03-16T11:00:00+00:00",
+    "status": "Confirmed",
+    "symptoms": [],
+    "ai_prediction": null,
+    "created_at": "2026-03-15T20:56:24.981517"
+  },
+  {
+    "_id": "app_1c81f043",
+    "doctor_id": "user_963c8b7a",
+    "user_id": "user_c9353814",
+    "date": "2026-03-16T11:00:00+00:00",
+    "status": "Confirmed",
+    "symptoms": [],
+    "ai_prediction": null,
+    "created_at": "2026-03-15T20:57:32.133092"
+  },
+  {
+    "_id": "app_c1b80d14",
+    "doctor_id": "user_09298c1d",
+    "user_id": "user_c9353814",
+    "date": "2026-03-16T11:00:00+00:00",
+    "status": "Confirmed",
+    "symptoms": [],
+    "ai_prediction": null,
+    "created_at": "2026-03-15T20:57:39.234016"
+  }
+]

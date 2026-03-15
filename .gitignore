@@ -11,8 +11,8 @@ backend/.venv/
 *.py[cod]
 *$py.class
 backend/uploads/
-backend/appointments_db.json
-backend/users_db.json
+# backend/appointments_db.json
+# backend/users_db.json
 
 # Environment variables
 .env

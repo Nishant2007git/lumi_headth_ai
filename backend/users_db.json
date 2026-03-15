@@ -1,0 +1,128 @@
+{
+  "doctor@lumi.com": {
+    "_id": "user_963c8b7a",
+    "email": "doctor@lumi.com",
+    "hashed_password": "$pbkdf2-sha256$29000$8f4/h9B6b23NeQ/h/B.DcA$2JwQ7hL2PvkIrLCU4HadJmjqYwlEWydcRrg5V2MGxHk",
+    "name": "Test Dr",
+    "role": "doctor",
+    "created_at": "2026-03-15T11:19:42.111935"
+  },
+  "nishant123@gmail.com": {
+    "_id": "user_c9353814",
+    "email": "nishant123@gmail.com",
+    "hashed_password": "$pbkdf2-sha256$29000$fI/Reg8BgNA6x5izVmqNEQ$FPS/TJCqb2aJAPA/eobcy251S94oBIBOn8nlFAKoxIw",
+    "name": "nishant",
+    "role": "patient",
+    "created_at": "2026-03-15T11:25:29.967753"
+  },
+  "admin@lumi.com": {
+    "_id": "user_ab915f4b",
+    "email": "admin@lumi.com",
+    "hashed_password": "$pbkdf2-sha256$29000$urf2PgdASGmNkRKC8L4Xgg$JdGNyr0uRGfx3DdR.DgXx/jd.KNNGdi/daN7n3KdxNc",
+    "name": "System Admin",
+    "role": "admin",
+    "department": null,
+    "created_at": "2026-03-15T11:52:14.036269"
+  },
+  "rahul@gmail.com": {
+    "_id": "user_13522733",
+    "email": "rahul@gmail.com",
+    "hashed_password": "$pbkdf2-sha256$29000$EELImVPqfe8dI.ScU8r5vw$OwO/agSISQwOiepawRMT56QRtp9SuLfZTmC/KcTNNyM",
+    "name": "DR Rahul",
+    "role": "doctor",
+    "department": "Psychiatry",
+    "created_at": "2026-03-15T12:01:37.817283",
+    "image_url": "http://127.0.0.1:8000/uploads/profiles/profile_a2a17bc0765742c5b62f37cf0b1da950.jpeg"
+  },
+  "rahul123@gmail.com": {
+    "_id": "user_08b464f6",
+    "email": "rahul123@gmail.com",
+    "hashed_password": "$pbkdf2-sha256$29000$UErJ2RsDoHQOQcg5pxTivA$zZSzcfZlHLcrVUuDvuWOygOURlRVgKQKkQtByIaV2mA",
+    "name": "Rahul",
+    "role": "patient",
+    "department": null,
+    "created_at": "2026-03-15T13:42:21.651004"
+  },
+  "dr_general_medicine@lumi.com": {
+    "_id": "user_09298c1d",
+    "email": "dr_general_medicine@lumi.com",
+    "hashed_password": "$pbkdf2-sha256$29000$1hojJMTYu/c.B6D0Xus9Jw$Ht0bsnzmV7VLjvFwPBVOVPmUhwg1bW1TnE7yg6N0ePI",
+    "name": "Dr. General Specialist",
+    "role": "doctor",
+    "department": "General Medicine",
+    "created_at": "2026-03-15T13:48:54.021311"
+  },
+  "dr_cardiology@lumi.com": {
+    "_id": "user_dd14d26c",
+    "email": "dr_cardiology@lumi.com",
+    "hashed_password": "$pbkdf2-sha256$29000$JMR4by3lfM/Z23svxRhDqA$.f/anexWjeO3zPJt91PjrAYqT8c1rCY0dkfz4ey5pBc",
+    "name": "Dr. Cardiology Specialist",
+    "role": "doctor",
+    "department": "Cardiology",
+    "created_at": "2026-03-15T13:48:54.058286"
+  },
+  "dr_neurology@lumi.com": {
+    "_id": "user_25e3469e",
+    "email": "dr_neurology@lumi.com",
+    "hashed_password": "$pbkdf2-sha256$29000$RggBgHAOoXSudW5NKYXQmg$GcpJiDeVItYofJ6EBLCOoYCVvUCrkMQZ5x/HcQLzkAY",
+    "name": "Dr. Neurology Specialist",
+    "role": "doctor",
+    "department": "Neurology",
+    "created_at": "2026-03-15T13:48:54.096311"
+  },
+  "dr_pediatrics@lumi.com": {
+    "_id": "user_2940e1d5",
+    "email": "dr_pediatrics@lumi.com",
+    "hashed_password": "$pbkdf2-sha256$29000$UUpJCeFcqxUipNTauzcGwA$i8OfC3oY4UvrGN83EkeB9hZpu61.u/XGYl3cDtSNClg",
+    "name": "Dr. Pediatrics Specialist",
+    "role": "doctor",
+    "department": "Pediatrics",
+    "created_at": "2026-03-15T13:48:54.133449"
+  },
+  "dr_oncology@lumi.com": {
+    "_id": "user_417427e3",
+    "email": "dr_oncology@lumi.com",
+    "hashed_password": "$pbkdf2-sha256$29000$QWiNMaaUMkbIubc2pvQeAw$Ms98NdkxlOc1YupQdy4lJOai955kW3gMRWscgzfeJZY",
+    "name": "Dr. Oncology Specialist",
+    "role": "doctor",
+    "department": "Oncology",
+    "created_at": "2026-03-15T13:48:54.171379"
+  },
+  "dr_dermatology@lumi.com": {
+    "_id": "user_df9782e2",
+    "email": "dr_dermatology@lumi.com",
+    "hashed_password": "$pbkdf2-sha256$29000$5ByDUMqZk7IWghCCUEoJoQ$9qt57qQ4vpbF2vuCg74mlDRfABRPG0RUNvkT7ykdcsw",
+    "name": "Dr. Dermatology Specialist",
+    "role": "doctor",
+    "department": "Dermatology",
+    "created_at": "2026-03-15T13:48:54.209157"
+  },
+  "harsh234@gmail.com": {
+    "_id": "user_85183f7a",
+    "email": "harsh234@gmail.com",
+    "hashed_password": "$pbkdf2-sha256$29000$G8NY651TqtU6J8R4T6n1Xg$8XJle72Irwz8gEDlTLleUODz0qtfmml5joFioLXZNZM",
+    "name": "Dr harsh",
+    "role": "doctor",
+    "department": "General Medicine",
+    "created_at": "2026-03-15T13:51:58.594383",
+    "image_url": "http://127.0.0.1:8000/uploads/profiles/profile_c3c3c802580649028d7656376cda37df.jpeg"
+  },
+  "patient@lumi.com": {
+    "_id": "user_fac3c20c",
+    "email": "patient@lumi.com",
+    "hashed_password": "$pbkdf2-sha256$29000$TgmhFKI0RmjtnTOG8L73fg$2lwALJz1xb2Fhb.Y2DJoC4K.ZqeK368dHKC0YiMi56s",
+    "name": "Test Patient",
+    "role": "patient",
+    "department": null,
+    "created_at": "2026-03-15T14:15:20.384278"
+  },
+  "gdgghfh@gmail.com": {
+    "_id": "user_66700923",
+    "email": "gdgghfh@gmail.com",
+    "hashed_password": "$pbkdf2-sha256$29000$.f.f8z7HOEeo1drbm/NeCw$usOmSithdB/yFb/LYDtaAFSMXUQZ5/wj/q3SHka7/QI",
+    "name": "ggfgfhggh",
+    "role": "patient",
+    "department": null,
+    "created_at": "2026-03-15T16:15:36.888491"
+  }
+}
