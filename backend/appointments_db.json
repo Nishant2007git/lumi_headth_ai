@@ -60,5 +60,31 @@
     ],
     "ai_prediction": "Potential General Cardiology Concern (Cardiology)",
     "created_at": "2026-03-15T22:24:03.554110"
+  },
+  {
+    "_id": "app_a1798059",
+    "doctor_id": "user_dd14d26c",
+    "user_id": "user_123",
+    "date": "2026-03-15T23:34:26.631665",
+    "status": "Confirmed",
+    "symptoms": [
+      "Chest pain",
+      "sweating",
+      "breathlessness"
+    ],
+    "ai_prediction": "Potential General Cardiology Concern (Cardiology)",
+    "created_at": "2026-03-15T23:04:26.631860"
+  },
+  {
+    "_id": "app_93bfe03c",
+    "doctor_id": "user_963c8b7a",
+    "user_id": "user_123",
+    "date": "2026-03-16T00:08:20.514174",
+    "status": "Confirmed",
+    "symptoms": [
+      "SEVERE ear pain"
+    ],
+    "ai_prediction": "Inconclusive",
+    "created_at": "2026-03-15T23:38:20.514299"
   }
 ]

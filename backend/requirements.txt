@@ -4,3 +4,9 @@ motor
 pydantic
 pydantic-settings
 python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
+email-validator
+pandas
+scikit-learn
+joblib

@@ -60,13 +60,19 @@ class SymptomPredictorModel:
                 input_vector[i] = 1
                 matches += 1
 
+        # Triage Overrides (Keywords)
+        intensity_keywords = ["severe", "extreme", "unbearable", "excruciating", "bleeding", "unconscious"]
+        has_red_flag = any(kw in " ".join(symptoms_list).lower() for kw in intensity_keywords)
+
         if matches == 0:
+            urgency = "Urgent" if has_red_flag else "Normal"
+            solution = "⚠️ HIGH INTENSITY DETECTED: Seek medical evaluation." if has_red_flag else "Monitor your vitals and keep a log of symptoms."
             return {
-                "disease": "Inconclusive Symptoms",
-                "confidence": 0.5,
-                "urgency": "Normal",
-                "recommendation": "Please provide more specific symptoms for an initial screening.",
-                "solution": "Monitor your vitals and keep a log of symptoms."
+                "disease": "Inconclusive",
+                "confidence": 0.0,
+                "urgency": urgency,
+                "recommendation": "Your symptoms don't match our primary dataset, but the intensity suggests you should consult a doctor." if has_red_flag else "Try describing your symptoms differently (e.g., 'fever', 'cough').",
+                "solution": solution
             }
 
         # 2. Predict using Multi-Output Random Forest
@@ -83,10 +89,15 @@ class SymptomPredictorModel:
         confidence = np.max(probs_list[0])
 
         # 3. Logic and Response
-        # Some diseases may be 'Normal' but if confidence is very low, we might want to flag it
-        # But for now, we trust the trained clinical triage
+        # DATA-DRIVEN TRIAGE + INTENSITY OVERRIDE (Red Flag Logic)
         urgency = severity_prediction
         
+        if has_red_flag and urgency == "Normal":
+            urgency = "Urgent"
+            solution_prefix = "⚠️ HIGH INTENSITY DETECTED: "
+        else:
+            solution_prefix = ""
+
         # 4. Map to Recommendations (Expanded for more context)
         recommendations = {
             'Fungal infection': "Consult a dermatologist for antifungal treatment.",
@@ -137,11 +148,10 @@ class SymptomPredictorModel:
             "confidence": float(confidence),
             "urgency": urgency,
             "recommendation": recommendations.get(prediction, "Consult a specialist for further evaluation."),
-            "solution": f"AI Triage verified this as {urgency} based on your primary symptoms."
+            "solution": f"{solution_prefix}AI Triage verified this as {urgency} based on your clinical pattern."
         }
 
 # Singleton instance
 predictor = SymptomPredictorModel()
 
 # Singleton instance to be used by the backend service wrapper
-predictor = SymptomPredictorModel()
