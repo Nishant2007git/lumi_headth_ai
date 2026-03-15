@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Activity, Heart, ShieldAlert, Loader2, Calendar } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { appointmentsAPI } from '../services/api';
@@ -9,6 +10,7 @@ import { Badge } from '../components/ui/Badge';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -41,17 +43,17 @@ export default function Dashboard() {
   return (
     <div className="page-container pb-20">
       <header>
-        <h1 className="heading-xl">Health Outlook</h1>
-        <p className="text-premium mt-2">Monitoring your wellness journey, {user?.name.split(' ')[0]}.</p>
+        <h1 className="heading-xl">{t('health_outlook')}</h1>
+        <p className="text-premium mt-2">{t('monitoring_wellness', { name: user?.name.split(' ')[0] })}</p>
       </header>
 
       <div className="grid-dashboard">
         <Card className="group">
           <CardHeader 
-            title="Wellness Index" 
+            title={t('wellness_index')} 
             icon={ShieldAlert}
             action={
-              <Badge variant="success" className="bg-green-50 text-green-600 border-green-100">Optimal Zone</Badge>
+              <Badge variant="success" className="bg-green-50 text-green-600 border-green-100">{t('optimal_zone')}</Badge>
             }
           />
           <div className="flex items-baseline">
@@ -61,11 +63,11 @@ export default function Dashboard() {
         </Card>
 
         <Card className="hover:border-blue-100 group">
-          <CardHeader title="Upcoming Session" icon={Calendar} />
+          <CardHeader title={t('upcoming_session')} icon={Calendar} />
           {loading ? (
              <div className="flex items-center space-x-3 py-2">
                 <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
-                <span className="text-slate-400 font-medium italic">Syncing...</span>
+                <span className="text-slate-400 font-medium italic">{t('syncing')}</span>
              </div>
           ) : nextAppt ? (
             <div className="flex flex-col">
@@ -77,8 +79,8 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-slate-400">No appointments</span>
-              <Link to="/appointments" className="text-primary-600 text-sm font-bold mt-2 hover:underline">Book a specialist →</Link>
+              <span className="text-xl font-bold text-slate-400">{t('no_appointments')}</span>
+              <Link to="/appointments" className="text-primary-600 text-sm font-bold mt-2 hover:underline">{t('book_specialist')} →</Link>
             </div>
           )}
         </Card>
@@ -86,14 +88,14 @@ export default function Dashboard() {
         <Card className="bg-gradient-to-br from-primary-600 to-indigo-700 text-white border-none group relative overflow-hidden">
           <div className="relative z-10">
             <CardHeader 
-              title="LumiAI Therapy" 
+              title={t('ai_assistant')} 
               icon={Heart} 
               className="text-white"
               iconClassName="bg-white/20 text-white backdrop-blur-md"
             />
-            <p className="text-base text-primary-50 mb-6 font-medium leading-relaxed">Feeling overwhelmed? Chat with our AI therapist anytime.</p>
+            <p className="text-base text-primary-50 mb-6 font-medium leading-relaxed">{t('feeling_overwhelmed')}</p>
             <Link to="/bot">
-              <Button variant="secondary" size="md">Start Session</Button>
+              <Button variant="secondary" size="md">{t('start_session')}</Button>
             </Link>
           </div>
           <Activity className="absolute -bottom-8 -right-8 h-32 w-32 text-white/5 group-hover:scale-125 transition-transform duration-1000" />
@@ -104,18 +106,18 @@ export default function Dashboard() {
         <div className="pt-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-black text-slate-900 flex items-center">
-              Appointment History
-              <span className="ml-4 px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] uppercase rounded-lg font-bold">{appointments.length} Total</span>
+              {t('appointment_history')}
+              <span className="ml-4 px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] uppercase rounded-lg font-bold">{appointments.length} {t('total')}</span>
             </h2>
           </div>
           <Card className="p-0 overflow-hidden border-slate-100 shadow-xl shadow-slate-200/20" hover={false}>
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-slate-50/50 border-b border-slate-100">
-                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Doctor</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Department</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Schedule</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest text-right">Status</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">{t('doctor')}</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">{t('reports')}</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">{t('schedule')}</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest text-right">{t('status')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
