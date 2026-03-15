@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+/* 
+  Tailwind v4 uses @theme and @apply which may be flagged as "Unknown at rule" by IDEs.
+  I have updated .vscode/settings.json to suppress these false positives.
+  The build and runtime will work correctly.
+*/
+@theme {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+}
+
+@layer base {
+  :root {
+    --radius-premium: 2.5rem;
+    --radius-inner: 1.5rem;
+    --shadow-premium: 0 20px 50px -12px rgb(0 0 0 / 0.05);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.4);
+  }
+
+  body {
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @apply bg-slate-50 text-slate-900;
+  }
+}
+
+@layer components {
+  /* Premium Card System */
+  .glass-card {
+    @apply bg-white border border-slate-100 shadow-[var(--shadow-premium)] rounded-[var(--radius-premium)] transition-all duration-300;
+    backdrop-filter: blur(12px);
+  }
+
+  /* Typography */
+  .heading-xl {
+    @apply text-3xl font-black tracking-tight text-slate-900;
+  }
+  
+  .text-premium {
+    @apply text-slate-500 font-medium leading-relaxed;
+  }
+
+  /* Layout Utilities */
+  .page-container {
+    @apply max-w-6xl mx-auto p-4 lg:p-8 space-y-8;
+  }
+
+  .grid-dashboard {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  /* Scrollbar Utilities */
+  .scrollbar-premium {
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+  }
+
+  .scrollbar-premium::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-premium::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-premium::-webkit-scrollbar-thumb {
+    background-color: #e2e8f0;
+    border-radius: 9999px;
+  }
+
+  .scrollbar-premium::-webkit-scrollbar-thumb:hover {
+    background-color: #cbd5e1;
+  }
+}
+
