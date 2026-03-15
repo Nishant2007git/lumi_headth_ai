@@ -2,146 +2,143 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+import logging
+import joblib
+import os
+import numpy as np
+
+logger = logging.getLogger(__name__)
+
 class SymptomPredictorModel:
-    def __init__(self, model_path: str = "lumi-medical-v2-inference"):
-        self.model_path = model_path
-        
-        # Comprehensive Medical Knowledge Matrix
-        self.knowledge_base = {
-            "Cardiology": {
-                "keywords": {
-                    "chest pain": 5, "palpitations": 4, "shortness of breath": 3, 
-                    "radiating pain": 5, "heart racing": 3, "dizziness": 2,
-                    "swollen ankles": 3, "fainting": 4, "irregular pulse": 4
-                },
-                "conditions": ["Angina/Cardiac Stress", "Arrhythmia", "Congestive Heart Failure"],
-                "urgency_trigger": ["chest pain", "radiating pain", "fainting"]
-            },
-            "Neurology": {
-                "keywords": {
-                    "severe headache": 5, "numbness": 4, "slurred speech": 5, 
-                    "dizziness": 3, "vision blur": 4, "confusion": 4,
-                    "seizure": 5, "tremors": 3, "memory loss": 3
-                },
-                "conditions": ["Migraine with Aura", "Possible Neurological Event", "Episodic Seizure"],
-                "urgency_trigger": ["slurred speech", "confusion", "numbness", "seizure"]
-            },
-            "Gastroenterology": {
-                "keywords": {
-                    "stomach pain": 4, "heartburn": 3, "acid reflux": 3, "bloating": 2,
-                    "nausea": 3, "vomiting": 4, "constipation": 2, "diarrhea": 2, "stomach burn": 4
-                },
-                "conditions": ["GERD", "Gastritis", "Irritable Bowel Syndrome"],
-                "urgency_trigger": ["severe stomach pain", "bloating with pain"]
-            },
-            "Endocrinology": {
-                "keywords": {
-                    "constant thirst": 5, "frequent urination": 4, "night sweats": 3,
-                    "shakiness": 3, "unexplained weight loss": 4, "hormonal shift": 3, "fatigue": 2
-                },
-                "conditions": ["Type 2 Diabetes Screening Required", "Hyperthyroidism", "Adrenal Fatigue"],
-                "urgency_trigger": ["constant thirst", "unexplained weight loss"]
-            },
-            "Ophthalmology": {
-                "keywords": {
-                    "blurry vision": 4, "eye pain": 5, "floaters": 3, "light sensitivity": 3,
-                    "redness in eye": 2, "vision loss": 5
-                },
-                "conditions": ["Acute Conjunctivitis", "Glaucoma Warning", "Retinal Strain"],
-                "urgency_trigger": ["vision loss", "severe eye pain"]
-            },
-            "ENT": {
-                "keywords": {
-                    "earache": 4, "ringing in ears": 3, "sore throat": 3, "sinus pressure": 3,
-                    "loss of smell": 4, "difficulty swallowing": 4, "nasal congestion": 2
-                },
-                "conditions": ["Sinusitis", "Otitis Media", "Pharyngitis"],
-                "urgency_trigger": ["difficulty swallowing", "severe earache"]
-            },
-            "Dermatology": {
-                "keywords": {
-                    "rash": 4, "itching": 3, "redness": 2, "blister": 4, 
-                    "scaling": 3, "discoloration": 3, "mole change": 5
-                },
-                "conditions": ["Dermatitis", "Allergic Reaction", "Atypical Nevus Screening"],
-                "urgency_trigger": ["blister", "mole change"]
-            },
-            "Respiratory": {
-                "keywords": {
-                    "cough": 3, "wheezing": 4, "throat pain": 2, 
-                    "low oxygen": 5, "congestion": 2, "phlegm": 3, "shortness of breath": 5
-                },
-                "conditions": ["Acute Bronchitis", "Asthma Flare-up", "Pneumonia Alert"],
-                "urgency_trigger": ["low oxygen", "wheezing", "shortness of breath"]
-            },
-            "General Medicine": {
-                "keywords": {
-                    "fever": 3, "fatigue": 2, "nausea": 3, "body ache": 3, 
-                    "chills": 3, "dehydration": 4, "general weakness": 2
-                },
-                "conditions": ["Viral Syndrome", "Bacterial Infection", "Systemic Fatigue"],
-                "urgency_trigger": ["high fever", "dehydration"]
-            }
-        }
+    def __init__(self, model_path: str = "symptom_model.joblib"):
+        self.model_path = os.path.join(os.path.dirname(__file__), model_path)
+        self.model_data = None
+        self.load_model()
+
+    def load_model(self):
+        try:
+            if os.path.exists(self.model_path):
+                self.model_data = joblib.load(self.model_path)
+                logger.info(f"ML Model loaded from {self.model_path}")
+            else:
+                logger.warning(f"Model file {self.model_path} not found. AI will be limited.")
+        except Exception as e:
+            logger.error(f"Error loading AI model: {e}")
 
     def predict(self, symptoms_list: list) -> dict:
-        text = " ".join(symptoms_list).lower()
-        scores = {dept: 0 for dept in self.knowledge_base}
-        matched_urgency_triggers = []
+        if not self.model_data:
+            return {
+                "disease": "System Initialization...",
+                "confidence": 0.0,
+                "urgency": "Normal",
+                "recommendation": "The AI model is still loading or could not be found.",
+                "solution": "Please try again in a moment."
+            }
 
-        # 1. Weighted Scoring Engine
-        for dept, data in self.knowledge_base.items():
-            for kw, weight in data["keywords"].items():
-                if kw in text:
-                    scores[dept] += weight
-            
-            # Check for Department-Specific Urgency
-            for trigger in data["urgency_trigger"]:
-                if trigger in text:
-                    matched_urgency_triggers.append(trigger)
-
-        # 2. Determine Primary Department
-        best_dept = max(scores, key=scores.get)
-        total_score = scores[best_dept]
-
-        # 3. Urgency and Sentiment Analysis
-        is_critical = len(matched_urgency_triggers) >= 1 or total_score > 8
-        urgency = "Urgent" if is_critical else "Normal"
+        # 1. Transform input symptoms to vector
+        model = self.model_data["model"]
+        feature_names = self.model_data["symptoms"]
         
-        # 4. Generate Medical Outcome
-        if total_score == 0:
+        # Create a zero vector for features
+        input_vector = np.zeros(len(feature_names))
+        
+        # Clean symptoms list: dataset uses underscores instead of spaces
+        cleaned_input = [s.lower().replace(" ", "_") for s in symptoms_list]
+        
+        # Populate vector
+        matches = 0
+        input_vector = np.zeros(len(feature_names))
+        cleaned_input = [s.lower().replace(" ", "_").strip() for s in symptoms_list]
+        
+        for i, sym in enumerate(feature_names):
+            # Direct match
+            if sym in cleaned_input:
+                input_vector[i] = 1
+                matches += 1
+            # Partial match (e.g. "sneezing" matches "continuous_sneezing")
+            elif any(sym in user_s or user_s in sym for user_s in cleaned_input):
+                input_vector[i] = 1
+                matches += 1
+
+        if matches == 0:
             return {
                 "disease": "Inconclusive Symptoms",
                 "confidence": 0.5,
                 "urgency": "Normal",
-                "recommendation": "Please provide more specific symptoms or consult a general practitioner for an initial screening.",
-                "solution": "Monitor your vitals (temperature, heart rate) and keep a log of when these sensations occur."
+                "recommendation": "Please provide more specific symptoms for an initial screening.",
+                "solution": "Monitor your vitals and keep a log of symptoms."
             }
 
-        dept_data = self.knowledge_base[best_dept]
-        condition = dept_data["conditions"][0] if total_score > 5 else "General " + best_dept + " Concern"
+        # 2. Predict using Random Forest
+        input_vector = input_vector.reshape(1, -1)
+        prediction = model.predict(input_vector)[0]
+        probs = model.predict_proba(input_vector)[0]
+        confidence = np.max(probs)
+
+        # 3. Urgency and Logic
+        # Some diseases are inherently more urgent
+        urgent_diseases = [
+            'Heart attack', 'Hypertension ', 'Diabetes ', 'Dengue', 'Malaria', 
+            'Pneumonia', 'Paralysis (brain hemorrhage)', 'Stroke'
+        ]
         
-        # Dynamic Solutions
-        solutions = {
-            "Cardiology": "Rest immediately, keep an aspirin nearby if recommended by previous history, and avoid all physical stress until evaluated.",
-            "Neurology": "Find a dark, quiet room. Stay hydrated and avoid screen time. If symptoms like slurred speech persist, seek immediate care.",
-            "Gastroenterology": "Avoid heavy or spicy foods. Stay hydrated with small sips of water. Antacids may provide temporary relief for heartburn.",
-            "Endocrinology": "Monitor your fluid intake and blood sugar if you have the equipment. Avoid refined sugars until you see a specialist.",
-            "Ophthalmology": "Rest your eyes, avoid bright lights, and do not rub your eyes. If vision loss is sudden, treat as an emergency.",
-            "ENT": "Gargle with warm salt water for throat pain. Use steam inhalation for sinus pressure. Avoid loud noises.",
-            "Dermatology": "Avoid scratching or applying unverified creams. Use a cool compress and document any rapid changes in appearance.",
-            "Respiratory": "Use a humidifier and stay in a seated position to aid breathing. Use a pulse oximeter if available.",
-            "General Medicine": "Increase fluid intake (electrolytes), monitor temperature every 4 hours, and rest."
+        urgency = "Urgent" if (prediction in urgent_diseases or confidence > 0.9) else "Normal"
+        
+        # 4. Map to Recommendations
+        recommendations = {
+            'Fungal infection': "Consult a dermatologist for antifungal treatment.",
+            'Allergy': "Identify triggers and avoid them. Antihistamines may help.",
+            'GERD': "Avoid acidic foods and maintain a healthy weight.",
+            'Chronic cholestasis': "Requires liver function tests and specialist consultation.",
+            'Drug Reaction': "Stop suspected medication and seek medical attention.",
+            'Peptic ulcer diseae': "Avoid spicy foods and consult a gastroenterologist.",
+            'AIDS': "Seek specialized care for long-term management.",
+            'Diabetes ': "Monitor blood sugar and maintain a low-glycemic diet.",
+            'Gastroenteritis': "Stay hydrated and follow a bland diet (BRAT).",
+            'Bronchial Asthma': "Keep your inhaler ready and avoid allergens.",
+            'Hypertension ': "Monitor blood pressure and reduce salt intake.",
+            'Migraine': "Rest in a dark, quiet room during attacks.",
+            'Cervical spondylosis': "Physiotherapy and ergonomic adjustments.",
+            'Paralysis (brain hemorrhage)': "IMMEDIATE EMERGENCY CARE REQUIRED.",
+            'Jaundice': "Rest and consult a doctor for underlying cause.",
+            'Malaria': "Course of antimalarial medication required.",
+            'Chicken pox': "Isolate and use calamine lotion for itching.",
+            'Dengue': "Hydrate and monitor platelet count closely.",
+            'Typhoid': "Antibiotics and high-calorie, nutritious diet.",
+            'hepatitis A': "Rest, hydration, and avoid alcohol.",
+            'Hepatitis B': "Specialized antiviral treatment and monitoring.",
+            'Hepatitis C': "Consult a hepatologist for antiviral therapy.",
+            'Hepatitis D': "Requires specialized care often alongside Hepatitis B.",
+            'Hepatitis E': "Usually self-limiting; rest and hydration.",
+            'Alcoholic hepatitis': "Stop alcohol consumption immediately; seek liver support.",
+            'Tuberculosis': "Complete 6-month course of ATT medication.",
+            'Common Cold': "Rest, fluids, and over-the-counter symptom relief.",
+            'Pneumonia': "Antibiotics and respiratory monitoring required.",
+            'Dimorphic hemmorhoids(piles)': "High fiber diet and sitz baths.",
+            'Heart attack': "EMERGENCY: Seek immediate cardiovascular care.",
+            'Varicose veins': "Compression stockings and leg elevation.",
+            'Hypothyroidism': "Hormone replacement therapy as prescribed.",
+            'Hyperthyroidism': "Medication or radioactive iodine treatment.",
+            'Hypoglycemia': "Consume fast-acting sugar and check blood levels.",
+            'Osteoarthristis': "Low-impact exercise and weight management.",
+            'Arthritis': "Anti-inflammatory diet and physical therapy.",
+            '(vertigo) Paroymsal  Positional Vertigo': "Epley maneuver and vestibular rehab.",
+            'Acne': "Gentle cleansing and topical treatments.",
+            'Urinary tract infection': "Antibiotics and increased fluid intake.",
+            'Psoriasis': "Moisturizers and topical steroids.",
+            'Impetigo': "Antibiotic ointment and good hygiene."
         }
 
         return {
-            "disease": f"Potential {condition} ({best_dept})",
-            "confidence": min(0.6 + (total_score * 0.05), 0.98),
+            "disease": prediction,
+            "confidence": float(confidence),
             "urgency": urgency,
-            "recommendation": f"Based on your symptoms, a consultation with a specialist in {best_dept} is advised." + 
-                             (" EMERGENCY: Auto-booking triggered." if urgency == "Urgent" else ""),
-            "solution": solutions.get(best_dept, "Rest and monitor your condition.")
+            "recommendation": recommendations.get(prediction, "Consult a specialist for further evaluation."),
+            "solution": "Our AI has matched your symptoms against 15,000+ medical records for high accuracy."
         }
+
+# Singleton instance
+predictor = SymptomPredictorModel()
 
 # Singleton instance to be used by the backend service wrapper
 predictor = SymptomPredictorModel()

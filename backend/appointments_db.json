@@ -48,5 +48,17 @@
     "symptoms": [],
     "ai_prediction": null,
     "created_at": "2026-03-15T20:57:39.234016"
+  },
+  {
+    "_id": "app_670d74fd",
+    "doctor_id": "user_dd14d26c",
+    "user_id": "user_123",
+    "date": "2026-03-15T22:54:03.553973",
+    "status": "Confirmed",
+    "symptoms": [
+      "chest pain"
+    ],
+    "ai_prediction": "Potential General Cardiology Concern (Cardiology)",
+    "created_at": "2026-03-15T22:24:03.554110"
   }
 ]
