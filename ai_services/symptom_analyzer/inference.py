@@ -69,64 +69,67 @@ class SymptomPredictorModel:
                 "solution": "Monitor your vitals and keep a log of symptoms."
             }
 
-        # 2. Predict using Random Forest
+        # 2. Predict using Multi-Output Random Forest
         input_vector = input_vector.reshape(1, -1)
-        prediction = model.predict(input_vector)[0]
-        probs = model.predict_proba(input_vector)[0]
-        confidence = np.max(probs)
+        # Prediction will be [prognosis, severity]
+        prediction_combined = model.predict(input_vector)[0]
+        prediction = prediction_combined[0]
+        severity_prediction = prediction_combined[1]
+        
+        # Get individual probabilities for confidence
+        # In multi-output, predict_proba returns a list of arrays
+        probs_list = model.predict_proba(input_vector)
+        # Index 0 is prognosis, Index 1 is severity
+        confidence = np.max(probs_list[0])
 
-        # 3. Urgency and Logic
-        # Some diseases are inherently more urgent
-        urgent_diseases = [
-            'Heart attack', 'Hypertension ', 'Diabetes ', 'Dengue', 'Malaria', 
-            'Pneumonia', 'Paralysis (brain hemorrhage)', 'Stroke'
-        ]
+        # 3. Logic and Response
+        # Some diseases may be 'Normal' but if confidence is very low, we might want to flag it
+        # But for now, we trust the trained clinical triage
+        urgency = severity_prediction
         
-        urgency = "Urgent" if (prediction in urgent_diseases or confidence > 0.9) else "Normal"
-        
-        # 4. Map to Recommendations
+        # 4. Map to Recommendations (Expanded for more context)
         recommendations = {
             'Fungal infection': "Consult a dermatologist for antifungal treatment.",
             'Allergy': "Identify triggers and avoid them. Antihistamines may help.",
             'GERD': "Avoid acidic foods and maintain a healthy weight.",
-            'Chronic cholestasis': "Requires liver function tests and specialist consultation.",
-            'Drug Reaction': "Stop suspected medication and seek medical attention.",
-            'Peptic ulcer diseae': "Avoid spicy foods and consult a gastroenterologist.",
-            'AIDS': "Seek specialized care for long-term management.",
-            'Diabetes ': "Monitor blood sugar and maintain a low-glycemic diet.",
-            'Gastroenteritis': "Stay hydrated and follow a bland diet (BRAT).",
-            'Bronchial Asthma': "Keep your inhaler ready and avoid allergens.",
-            'Hypertension ': "Monitor blood pressure and reduce salt intake.",
-            'Migraine': "Rest in a dark, quiet room during attacks.",
-            'Cervical spondylosis': "Physiotherapy and ergonomic adjustments.",
-            'Paralysis (brain hemorrhage)': "IMMEDIATE EMERGENCY CARE REQUIRED.",
-            'Jaundice': "Rest and consult a doctor for underlying cause.",
-            'Malaria': "Course of antimalarial medication required.",
-            'Chicken pox': "Isolate and use calamine lotion for itching.",
-            'Dengue': "Hydrate and monitor platelet count closely.",
-            'Typhoid': "Antibiotics and high-calorie, nutritious diet.",
-            'hepatitis A': "Rest, hydration, and avoid alcohol.",
-            'Hepatitis B': "Specialized antiviral treatment and monitoring.",
-            'Hepatitis C': "Consult a hepatologist for antiviral therapy.",
-            'Hepatitis D': "Requires specialized care often alongside Hepatitis B.",
-            'Hepatitis E': "Usually self-limiting; rest and hydration.",
-            'Alcoholic hepatitis': "Stop alcohol consumption immediately; seek liver support.",
-            'Tuberculosis': "Complete 6-month course of ATT medication.",
-            'Common Cold': "Rest, fluids, and over-the-counter symptom relief.",
-            'Pneumonia': "Antibiotics and respiratory monitoring required.",
+            'Chronic cholestasis': "Requires liver function tests; consult a specialist.",
+            'Drug Reaction': "Stop suspected medication and seek immediate care.",
+            'Peptic ulcer diseae': "Avoid spicy foods; consult a gastroenterologist.",
+            'AIDS': "Seek specialized care for therapy and long-term health.",
+            'Diabetes ': "Monitor blood sugar levels and consult an endocrinologist.",
+            'Gastroenteritis': "Stay hydrated and follow a bland (BRAT) diet.",
+            'Bronchial Asthma': "Ensure inhaler is accessible; avoid known allergens.",
+            'Hypertension ': "Monitor BP and consult a doctor regarding medication.",
+            'Migraine': "Rest in a dark, quiet room; monitor triggers.",
+            'Cervical spondylosis': "Physiotherapy and posture correction advised.",
+            'Paralysis (brain hemorrhage)': "EMERGENCY: Immediate hospital transport required.",
+            'Jaundice': "Rest and clinical evaluation of liver function required.",
+            'Malaria': "Course of antimalarials and monitoring is necessary.",
+            'Chicken pox': "Isolate and treat symptoms; avoid scratching.",
+            'Dengue': "Hydrate and follow platelet counts closely.",
+            'Typhoid': "Antibiotics and supportive care required.",
+            'hepatitis A': "Hydration and liver-friendly diet during recovery.",
+            'Hepatitis B': "Specialist consultation for viral load monitoring.",
+            'Hepatitis C': "Consult a hepatologist for contemporary treatments.",
+            'Hepatitis D': "Requires specialized viral management.",
+            'Hepatitis E': "Supportive care; usually resolves with rest.",
+            'Alcoholic hepatitis': "Cease alcohol use immediately; seek liver support.",
+            'Tuberculosis': "Complete 6-month supervised medication course.",
+            'Common Cold': "Rest, fluids, and OTC symptom management.",
+            'Pneumonia': "Chest X-ray and antibiotic treatment required.",
             'Dimorphic hemmorhoids(piles)': "High fiber diet and sitz baths.",
-            'Heart attack': "EMERGENCY: Seek immediate cardiovascular care.",
-            'Varicose veins': "Compression stockings and leg elevation.",
-            'Hypothyroidism': "Hormone replacement therapy as prescribed.",
-            'Hyperthyroidism': "Medication or radioactive iodine treatment.",
-            'Hypoglycemia': "Consume fast-acting sugar and check blood levels.",
-            'Osteoarthristis': "Low-impact exercise and weight management.",
-            'Arthritis': "Anti-inflammatory diet and physical therapy.",
-            '(vertigo) Paroymsal  Positional Vertigo': "Epley maneuver and vestibular rehab.",
-            'Acne': "Gentle cleansing and topical treatments.",
-            'Urinary tract infection': "Antibiotics and increased fluid intake.",
-            'Psoriasis': "Moisturizers and topical steroids.",
-            'Impetigo': "Antibiotic ointment and good hygiene."
+            'Heart attack': "CRITICAL EMERGENCY: Call emergency services now.",
+            'Varicose veins': "Compression therapy and avoidance of long standing.",
+            'Hypothyroidism': "Regular hormone replacement as prescribed.",
+            'Hyperthyroidism': "Clinical management of thyroid activity.",
+            'Hypoglycemia': "Immediate glucose intake; monitor blood levels.",
+            'Osteoarthristis': "Joint support and low-impact activity.",
+            'Arthritis': "Anti-inflammatory management and physical therapy.",
+            '(vertigo) Paroymsal  Positional Vertigo': "Vestibular exercises and specialist review.",
+            'Acne': "Dermatological cleansing and topical treatment.",
+            'Urinary tract infection': "Antibiotic course and increased fluid intake.",
+            'Psoriasis': "Topical management and lifestyle adjustments.",
+            'Impetigo': "Prescription topical antibiotics and hygiene."
         }
 
         return {
@@ -134,7 +137,7 @@ class SymptomPredictorModel:
             "confidence": float(confidence),
             "urgency": urgency,
             "recommendation": recommendations.get(prediction, "Consult a specialist for further evaluation."),
-            "solution": "Our AI has matched your symptoms against 15,000+ medical records for high accuracy."
+            "solution": f"AI Triage verified this as {urgency} based on your primary symptoms."
         }
 
 # Singleton instance

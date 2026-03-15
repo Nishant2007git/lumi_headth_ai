@@ -33,22 +33,80 @@ def train_model():
     X = X[common_cols]
     X_test = X_test[common_cols]
 
+    # 3. Severity Mapping
+    severity_map = {
+        'Heart attack': 'Emergency',
+        'Paralysis (brain hemorrhage)': 'Emergency',
+        'Dengue': 'Urgent',
+        'Malaria': 'Urgent',
+        'Pneumonia': 'Urgent',
+        'Typhoid': 'Urgent',
+        'hepatitis A': 'Urgent',
+        'Hepatitis B': 'Urgent',
+        'Hepatitis C': 'Urgent',
+        'Hepatitis D': 'Urgent',
+        'Hepatitis E': 'Urgent',
+        'Jaundice': 'Urgent',
+        'Hypoglycemia': 'Urgent',
+        'Hypertension ': 'Urgent',
+        'Diabetes ': 'Urgent',
+        'AIDS': 'Urgent',
+        'Tuberculosis': 'Urgent',
+        'Bronchial Asthma': 'Urgent',
+        'Alcoholic hepatitis': 'Urgent',
+        'Drug Reaction': 'Urgent',
+        'Hypothyroidism': 'Normal',
+        'Hyperthyroidism': 'Normal',
+        'Common Cold': 'Normal',
+        'Acne': 'Normal',
+        'Fungal infection': 'Normal',
+        'Allergy': 'Normal',
+        'GERD': 'Normal',
+        'Chronic cholestasis': 'Normal',
+        'Peptic ulcer diseae': 'Normal',
+        'Gastroenteritis': 'Normal',
+        'Migraine': 'Normal',
+        'Cervical spondylosis': 'Normal',
+        'Chicken pox': 'Normal',
+        'Dimorphic hemmorhoids(piles)': 'Normal',
+        'Varicose veins': 'Normal',
+        'Osteoarthristis': 'Normal',
+        'Arthritis': 'Normal',
+        '(vertigo) Paroymsal  Positional Vertigo': 'Normal',
+        'Urinary tract infection': 'Normal',
+        'Psoriasis': 'Normal',
+        'Impetigo': 'Normal'
+    }
+
+    # Add severity column to training data
+    y_severity = y.map(severity_map).fillna('Normal')
+    y_test_severity = y_test.map(severity_map).fillna('Normal')
+
     print(f"Dataset loaded. Symptoms: {X.shape[1]}, Records: {X.shape[0]}")
 
-    # 3. Training
+    # 4. Training (Multi-Output)
+    # We combine y (prognosis) and y_severity into a multi-target output
+    Y_combined = pd.concat([y, y_severity], axis=1)
+    
     model = RandomForestClassifier(n_estimators=100, random_state=42)
-    model.fit(X, y)
+    model.fit(X, Y_combined)
 
-    # 4. Evaluation
+    # 5. Evaluation
     y_pred = model.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    print(f"Model Accuracy: {accuracy * 100:.2f}%")
+    # y_pred will be a numpy array where each row is [prognosis, severity]
+    
+    prog_acc = accuracy_score(y_test, y_pred[:, 0])
+    sev_acc = accuracy_score(y_test_severity, y_pred[:, 1])
+    
+    print(f"Prognosis Accuracy: {prog_acc * 100:.2f}%")
+    print(f"Severity Accuracy: {sev_acc * 100:.2f}%")
 
-    # 5. Save Model and Metadata
+    # 6. Save Model and Metadata
     model_data = {
         "model": model,
         "symptoms": list(X.columns),
-        "classes": list(model.classes_)
+        "classes": list(y.unique()),
+        "severity_map": severity_map
     }
     
     joblib.dump(model_data, "symptom_model.joblib")
